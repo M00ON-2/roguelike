@@ -1,26 +1,32 @@
 import math # ? serve pra calculos de posição, colisão e movimento
 
-import pgzrun 
+import pgzrun
 
 WIDTH = 800
 HEIGHT = 600
 TITLE = "naosei"
 
-# main
+# Cria o personagem principal (imagem 'hero_idle.png' deve estar na pasta images)
+hero = Actor("hero_idle", (400, 300))
 
-def iniciar
-    update()
+# Desenha o jogo
+def draw():
+    screen.clear()
+    hero.draw()
 
- if keyboard.left:
-   hero.x += 5  # move 5 pixels para esquerda
- if keyboard.right:
-    hero.x += 5  # move 5 pixels para direita
- if keyboard.up:
-    hero.y += 5 
- if keyboard.down;
-    hero.y += 5
+# Atualiza o jogo (movimento, lógica, etc)
+def update():
+    if keyboard.left:
+        hero.x -= 5
+    if keyboard.right:
+        hero.x += 5
+    if keyboard.up:
+        hero.y -= 5
+    if keyboard.down:
+        hero.y += 5
 
-iniciar()
+pgzrun.go()
+
 
 
 # * update() atualizar o jogo toda hora
