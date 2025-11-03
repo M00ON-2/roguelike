@@ -6,10 +6,9 @@ WIDTH = 800
 HEIGHT = 600
 TITLE = "naosei"
 
-# Cria o personagem principal (imagem 'hero_idle.png' deve estar na pasta images)
+# Cria o personagem principal (hero) com a imagem no assets
 hero = Actor("hero_idle", (400, 300))
 
-# Desenha o jogo
 def draw():
     screen.clear()
     hero.draw()
