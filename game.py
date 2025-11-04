@@ -1,12 +1,21 @@
 import math # ? serve pra calculos de posição, colisão e movimento
 
-import pgzrun 
+import pgzrun
 
 WIDTH = 800
 HEIGHT = 600
-TITLE = "naosei"
+TITLE = "BOSTAAAAAAAAAAA"
 
-# * update() atualizar o jogo toda hora
+def update():
+    pass
+
+def draw():
+    screen.fill((0, 126, 0))
+    pass
+
+pgzrun.go()
+    
+# * update() atualizar o jogo toda hora 
 # draw() desenha o jogo 
 # actor() objeto/coisa com imagem que pode aparecer na tela 
 # * WIDTH e HEIGHT é pra definição do tamanho da tela
@@ -21,7 +30,7 @@ TITLE = "naosei"
 # if keyboard.right:
 #    hero.x += 5  # move 5 pixels para direita
 
-# ! • EXEMPLO DE DETECÇÃO DE GRAVIDADE 
+# ! • EXEMPLO DE DETECÇÃO DE GRAVIDADE . \path\to\venv\Scripts\Activate.
 
 # hero.vy += 0.5  # aceleração da gravidade
 # hero.y += hero.vy
