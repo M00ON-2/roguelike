@@ -1,8 +1,9 @@
-import pgzrun
 import math
 
+import pgzrun
 from pygame import Rect
 
+# === CONFIGURAÇÕES BÁSICAS ===
 TILE_SIZE = 18
 ROWS = 30
 COLS = 20
@@ -11,17 +12,21 @@ WIDTH = TILE_SIZE * ROWS
 HEIGHT = TILE_SIZE * COLS
 TITLE = "COLISÃO CORRIGIDA"
 
+# === LISTAS DE OBJETOS ===
 plataformas = []
 coins = []
 obstacles = []
 trees = []
 
-hero = Actor("hero", (100, 100)) 
+# === HEROI ===
+hero = Actor("hero", (100, 100))
 vel_y = 0
 gravity = 0.5
 dead = False
 
-def load_map(caminho): # carrega as plataformas
+
+# === FUNÇÕES DE CARREGAMENTO ===
+def load_map(caminho):  # plataformas (terra e nuvens)
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -38,7 +43,8 @@ def load_map(caminho): # carrega as plataformas
             block.y = y * TILE_SIZE + TILE_SIZE // 2
             plataformas.append(block)
 
-def load_coins(caminho): #carrega as moedas
+
+def load_coins(caminho):  # moedas
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -51,7 +57,7 @@ def load_coins(caminho): #carrega as moedas
                 coins.append(coin)
 
 
-def load_obstacles(caminho): #carrega os obstaculos
+def load_obstacles(caminho):  # obstáculos que matam
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -64,7 +70,7 @@ def load_obstacles(caminho): #carrega os obstaculos
                 obstacles.append(obstacle)
 
 
-def load_tree(caminho):
+def load_tree(caminho):  # árvores (apenas decorativas)
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -76,53 +82,56 @@ def load_tree(caminho):
                 t.y = y * TILE_SIZE + TILE_SIZE // 2
                 trees.append(t)
 
+
+# === CARREGAR OS MAPAS ===
 load_map('C:/Users/PC/Documents/GitHub/roguelike/game/plataformer.csv')
 load_coins('C:/Users/PC/Documents/GitHub/roguelike/game/coins.csv')
 load_obstacles('C:/Users/PC/Documents/GitHub/roguelike/game/obstacles.csv')
 load_tree('C:/Users/PC/Documents/GitHub/roguelike/game/tree.csv')
 
 
+# === LÓGICA DO JOGO ===
 def update():
     global vel_y, dead
     if dead:
         return
 
-    # movimento lateral
+    # Movimento lateral
     if keyboard.left:
         hero.x -= 3
     if keyboard.right:
         hero.x += 3
 
-    # gravidade
+    # Gravidade
     vel_y += gravity
     hero.y += vel_y
 
     heroi_rect = Rect(hero.x - 8, hero.y - 16, 16, 32)
     no_chao = False
 
-    # --- colisão com plataformas ---
+    # --- Colisão com plataformas (terra e nuvem) ---
     for bloco in plataformas:
-        bloco_rect = Rect(bloco.x - 9, bloco.y - 9, 18, 18)
+        largura, altura = bloco.width, bloco.height  # usa o tamanho real da sprite
+        bloco_rect = Rect(bloco.x - largura / 2, bloco.y - altura / 2, largura, altura)
 
-        # Verifica colisão vertical realista
         if heroi_rect.colliderect(bloco_rect):
-            # só para o herói se ele estiver DESCENDO e VINDO DE CIMA
+            # só colide se o herói estiver descendo e vindo de cima
             if vel_y > 0 and hero.y < bloco.y:
-                hero.y = bloco.y - 18
+                hero.y = bloco_rect.top - 16  # 16 = metade da altura do herói
                 vel_y = 0
                 no_chao = True
 
-    # pular somente se realmente estiver no chão
+    # Pular apenas se estiver no chão
     if no_chao and keyboard.up:
         vel_y = -10
 
-    # --- colisão com moedas ---
+    # --- Colisão com moedas ---
     for coin in coins[:]:
         coin_rect = Rect(coin.x - 8, coin.y - 8, 16, 16)
         if heroi_rect.colliderect(coin_rect):
             coins.remove(coin)
 
-    # --- colisão com obstáculos ---
+    # --- Colisão com obstáculos (morte) ---
     for obstacle in obstacles:
         obstacle_rect = Rect(obstacle.x - 8, obstacle.y - 8, 16, 16)
         if heroi_rect.colliderect(obstacle_rect):
@@ -130,21 +139,25 @@ def update():
             break
 
 
+# === DESENHAR NA TELA ===
 def draw():
     screen.clear()
     for bloco in plataformas:
         bloco.draw()
     for coin in coins:
         coin.draw()
-    for t in trees:
-        t.draw()
     for obstacle in obstacles:
         obstacle.draw()
+    for t in trees:
+        t.draw()
     hero.draw()
 
     if dead:
-        screen.draw.text("VOCÊ MORREU!", center=(WIDTH // 2, HEIGHT // 2),
-                         fontsize=40, color="red", shadow=(1, 1))
+        screen.draw.text("VOCÊ MORREU!",
+                         center=(WIDTH // 2, HEIGHT // 2),
+                         fontsize=40,
+                         color="red",
+                         shadow=(1, 1))
 
 
 pgzrun.go()
