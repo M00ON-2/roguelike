@@ -14,7 +14,7 @@ plataformas = []
 coins = []
 obstacles = []
 
-heroi = Actor("heroi", (100, 100))
+heroi = Actor("hero", (100, 100))
 vel_y = 0
 gravidade = 0.5
 morto = False
@@ -27,9 +27,9 @@ def load_map(caminho):
         valores = linha.split(",")
         for x, valor in enumerate(valores):
             if valor in ["21", "22", "23"]:
-                imagem = "bloco1"
+                imagem = "block1"
             elif valor in ["153", "154", "155", "156"]:
-                imagem = "nuvem"
+                imagem = "cloud"
             else:
                 continue
             bloco = Actor(imagem)
