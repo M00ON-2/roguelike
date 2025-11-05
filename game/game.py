@@ -1,5 +1,6 @@
-import pgzrun
 import math
+
+import pgzrun
 from pygame import Rect
 
 TILE_SIZE = 18
@@ -13,32 +14,31 @@ TITLE = "COLISÃO CORRIGIDA"
 plataformas = []
 coins = []
 obstacles = []
+trees = []
 
-heroi = Actor("hero", (100, 100))
+hero = Actor("hero", (100, 100)) 
 vel_y = 0
-gravidade = 0.5
-morto = False
+gravity = 0.5
+dead = False
 
-
-def load_map(caminho):
+def load_map(caminho): # carrega as plataformas
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
         valores = linha.split(",")
         for x, valor in enumerate(valores):
             if valor in ["21", "22", "23"]:
-                imagem = "block1"
+                image = "block1"
             elif valor in ["153", "154", "155", "156"]:
-                imagem = "cloud"
+                image = "cloud"
             else:
                 continue
-            bloco = Actor(imagem)
-            bloco.x = x * TILE_SIZE + TILE_SIZE // 2
-            bloco.y = y * TILE_SIZE + TILE_SIZE // 2
-            plataformas.append(bloco)
+            block = Actor(image)
+            block.x = x * TILE_SIZE + TILE_SIZE // 2
+            block.y = y * TILE_SIZE + TILE_SIZE // 2
+            plataformas.append(block)
 
-
-def load_coins(caminho):
+def load_coins(caminho): #carrega as moedas
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -51,7 +51,7 @@ def load_coins(caminho):
                 coins.append(coin)
 
 
-def load_obstacles(caminho):
+def load_obstacles(caminho): #carrega os obstaculos
     with open(caminho, "r") as f:
         linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
@@ -64,27 +64,40 @@ def load_obstacles(caminho):
                 obstacles.append(obstacle)
 
 
+def load_tree(caminho):
+    with open(caminho, "r") as f:
+        linhas = f.read().strip().split("\n")
+    for y, linha in enumerate(linhas):
+        valores = linha.split(",")
+        for x, valor in enumerate(valores):
+            if valor != "-1":
+                t = Actor("tree")
+                t.x = x * TILE_SIZE + TILE_SIZE // 2
+                t.y = y * TILE_SIZE + TILE_SIZE // 2
+                trees.append(t)
+
 load_map('C:/Users/PC/Documents/GitHub/roguelike/game/plataformer.csv')
 load_coins('C:/Users/PC/Documents/GitHub/roguelike/game/coins.csv')
 load_obstacles('C:/Users/PC/Documents/GitHub/roguelike/game/obstacles.csv')
+load_tree('C:/Users/PC/Documents/GitHub/roguelike/game/tree.csv')
 
 
 def update():
-    global vel_y, morto
-    if morto:
+    global vel_y, dead
+    if dead:
         return
 
     # movimento lateral
     if keyboard.left:
-        heroi.x -= 3
+        hero.x -= 3
     if keyboard.right:
-        heroi.x += 3
+        hero.x += 3
 
     # gravidade
-    vel_y += gravidade
-    heroi.y += vel_y
+    vel_y += gravity
+    hero.y += vel_y
 
-    heroi_rect = Rect(heroi.x - 8, heroi.y - 16, 16, 32)
+    heroi_rect = Rect(hero.x - 8, hero.y - 16, 16, 32)
     no_chao = False
 
     # --- colisão com plataformas ---
@@ -94,8 +107,8 @@ def update():
         # Verifica colisão vertical realista
         if heroi_rect.colliderect(bloco_rect):
             # só para o herói se ele estiver DESCENDO e VINDO DE CIMA
-            if vel_y > 0 and heroi.y < bloco.y:
-                heroi.y = bloco.y - 18
+            if vel_y > 0 and hero.y < bloco.y:
+                hero.y = bloco.y - 18
                 vel_y = 0
                 no_chao = True
 
@@ -113,7 +126,7 @@ def update():
     for obstacle in obstacles:
         obstacle_rect = Rect(obstacle.x - 8, obstacle.y - 8, 16, 16)
         if heroi_rect.colliderect(obstacle_rect):
-            morto = True
+            dead = True
             break
 
 
@@ -123,11 +136,13 @@ def draw():
         bloco.draw()
     for coin in coins:
         coin.draw()
+    for t in trees:
+        t.draw()
     for obstacle in obstacles:
         obstacle.draw()
-    heroi.draw()
+    hero.draw()
 
-    if morto:
+    if dead:
         screen.draw.text("VOCÊ MORREU!", center=(WIDTH // 2, HEIGHT // 2),
                          fontsize=40, color="red", shadow=(1, 1))
 
