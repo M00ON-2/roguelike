@@ -14,6 +14,7 @@ TITLE = "COLISÃO CORRIGIDA"
 plataformas = []
 coins = []
 obstacles = []
+trees = []
 
 hero = Actor("hero", (100, 100)) 
 vel_y = 0
@@ -62,18 +63,18 @@ def load_obstacles(caminho): #carrega os obstaculos
                 obstacle.y = y * TILE_SIZE + TILE_SIZE // 2
                 obstacles.append(obstacle)
 
+
 def load_tree(caminho):
     with open(caminho, "r") as f:
-     linhas = f.read().strip().split("\n")
+        linhas = f.read().strip().split("\n")
     for y, linha in enumerate(linhas):
         valores = linha.split(",")
         for x, valor in enumerate(valores):
             if valor != "-1":
-                obstacle = Actor("tree")
-                obstacle = Actor("trunk")
-                obstacle.x = x * TILE_SIZE + TILE_SIZE // 2
-                obstacle.y = y * TILE_SIZE + TILE_SIZE // 2
-                obstacles.append(obstacle)
+                t = Actor("tree")
+                t.x = x * TILE_SIZE + TILE_SIZE // 2
+                t.y = y * TILE_SIZE + TILE_SIZE // 2
+                trees.append(t)
 
 load_map('C:/Users/PC/Documents/GitHub/roguelike/game/plataformer.csv')
 load_coins('C:/Users/PC/Documents/GitHub/roguelike/game/coins.csv')
@@ -135,6 +136,8 @@ def draw():
         bloco.draw()
     for coin in coins:
         coin.draw()
+    for t in trees:
+        t.draw()
     for obstacle in obstacles:
         obstacle.draw()
     hero.draw()
