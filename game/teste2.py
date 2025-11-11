@@ -1,5 +1,4 @@
-import pgzrun
-from pygame import Rect
+import pgzrun; import math; from pygame import Rect
 
 TILE_SIZE, ROWS, COLS = 18, 30, 20
 WIDTH, HEIGHT = TILE_SIZE * ROWS, TILE_SIZE * COLS
@@ -59,13 +58,27 @@ class Enemy(Character):
     def __init__(self, pos, l, r):
         super().__init__("enemy_walk1", pos, 0.5, 2)
         self.l, self.r = l, r
+        self.base_y = pos[1]
+        self.t = 0
 
     def update(self):
         if self.dead: return
+
+        # Movimento horizontal
         self.actor.x += self.dir * self.sp
+
+        # Pequeno movimento de "flutuar" (opcional)
+        self.t += 0.1
+        self.actor.y = self.base_y + math.sin(self.t) * 5
+
+        # Inverter direção se bater nos limites
         if self.actor.x <= self.l or self.actor.x >= self.r:
-            self.dir *= -1; self.actor.flip_x = self.dir < 0
-        self.state = "walk"; super().update(); self.animate("enemy")
+            self.dir *= -1
+            self.actor.flip_x = self.dir < 0
+
+        # Animação
+        self.state = "walk"
+        self.animate("enemy")
 
 hero = Hero((100, 100))
 enemies = [Enemy((300, 200), 260, 340), Enemy((500, 150), 460, 560)]
@@ -97,7 +110,10 @@ load_obstacles('C:/Users/PC/Documents/GitHub/roguelike/game/obstacles.csv')
 def toggle_music():
     global music_on
     music_on = not music_on
-    (music.play if music_on else music.stop)("bg_music")
+    if music_on:
+        music.play('bg_music')
+    else:
+        music.stop()
 
 def toggle_sound():
     global sound_on
@@ -128,6 +144,9 @@ def update_menu():
     elif keyboard.K_2: toggle_music(); key_cd = 10
     elif keyboard.K_3: toggle_sound(); key_cd = 10
     elif keyboard.K_4: exit()
+    
+    if music_on and not music.is_playing('bg_music'):
+        music.play('bg_music')
 
 # === UPDATE / DRAW ===
 def update():
@@ -154,5 +173,6 @@ def draw():
     if game_state == "dead":
         screen.draw.text("YOU DIED!", center=(WIDTH // 2, HEIGHT // 2),
                          fontsize=60, color="red", shadow=(2, 2))
+
 
 pgzrun.go()
