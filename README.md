@@ -5,7 +5,7 @@ Trata-se de um jogo de plataforma desenvolvido em Python, utilizando o Pygame Ze
 
 --Tecnologias Utilizadas--
 
-Python 3
+Python 
 
 Pygame Zero
 
